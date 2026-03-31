@@ -42,6 +42,11 @@
   .hint { font-size: 12px; color: var(--text3); }
   .error { font-size: 13px; color: var(--red-text); margin-top: 0.75rem; padding: 10px 14px; background: var(--red-bg); border-radius: var(--radius-sm); border: 1px solid rgba(204,40,40,0.25); display: none; }
 
+  @media (max-width: 620px) {
+    .search-row { flex-direction: column; }
+    .check-btn { width: 100%; }
+  }
+
   /* ── Page ── */
   .page { max-width: 860px; margin: 0 auto; padding: 1.75rem 1rem 3rem; }
   .loc-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 1.25rem; }
@@ -60,11 +65,14 @@
   .tonight-banner.risk-high { background: var(--red-bg); border: 1px solid rgba(204,40,40,0.25); border-left: 4px solid var(--red); }
   .tonight-banner.risk-med  { background: var(--amber-bg); border: 1px solid rgba(184,112,0,0.25); border-left: 4px solid var(--amber); }
   .tonight-banner.risk-low  { background: var(--green-bg); border: 1px solid rgba(26,122,72,0.25); border-left: 4px solid var(--green); }
+  .tonight-banner.risk-none { background: var(--surface2); border: 1px solid var(--border2); border-left: 4px solid var(--text2); }
+  
   .tonight-icon { font-size: 32px; line-height: 1; flex-shrink: 0; }
   .tonight-body { flex: 1; min-width: 200px; }
   .tonight-label { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text3); margin-bottom: 2px; }
   .tonight-heading { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--text); font-weight: 400; margin-bottom: 4px; }
   .tonight-detail { font-size: 13px; color: var(--text2); }
+  
   .cover-advice {
     flex-shrink: 0; padding: 0.6rem 1.1rem; border-radius: var(--radius-sm);
     font-size: 13px; font-weight: 600; text-align: center; min-width: 140px;
@@ -72,6 +80,7 @@
   .cover-yes  { background: var(--red); color: #fff; }
   .cover-maybe { background: var(--amber); color: #fff; }
   .cover-no   { background: var(--green); color: #fff; }
+  .cover-none { background: var(--text3); color: #fff; }
   .cover-advice .cover-sub { font-size: 11px; font-weight: 400; opacity: 0.9; margin-top: 2px; }
 
   /* ── Legend ── */
@@ -80,14 +89,18 @@
   .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   /* ── Nav + grid ── */
-  .grid-nav { display: flex; align-items: stretch; gap: 10px; margin-bottom: 0.75rem; }
-  .nav-btn { flex-shrink: 0; width: 38px; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-sm); cursor: pointer; color: var(--frost-blue); font-size: 20px; font-weight: 600; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s, transform 0.1s; box-shadow: 0 2px 8px rgba(0,80,160,0.07); user-select: none; }
+  .nav-controls-wrap { display: flex; justify-content: center; margin-bottom: 1.5rem; }
+  .nav-controls { display: inline-flex; align-items: center; gap: 15px; }
+  .nav-btn { flex-shrink: 0; width: 44px; height: 44px; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-sm); cursor: pointer; color: var(--frost-blue); font-size: 20px; font-weight: 600; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s, transform 0.1s; box-shadow: 0 2px 8px rgba(0,80,160,0.07); user-select: none; }
   .nav-btn:hover { background: var(--frost-blue); color: #fff; }
   .nav-btn:active { transform: scale(0.95); }
-  .nav-btn:disabled { opacity: 0.25; cursor: default; background: var(--surface); color: var(--text3); }
+  .nav-btn:disabled { opacity: 0.25; cursor: default; background: var(--surface); color: var(--text3); box-shadow: none; }
+  .nav-indicator { margin: 0; font-size: 13px; font-weight: 600; color: var(--text2); min-width: 90px; text-align: center; }
+  
   .day-grid { flex: 1; display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
-  @media (max-width: 620px) { .day-grid { grid-template-columns: 1fr; } .grid-nav { flex-direction: column; } .nav-btn { width: 100%; height: 38px; } }
-  .nav-indicator { text-align: center; font-size: 12px; color: var(--text3); margin-bottom: 1.5rem; }
+  @media (max-width: 620px) { 
+    .day-grid { grid-template-columns: 1fr; } 
+  }
 
   /* ── Day cards ── */
   .day-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem 1.2rem; position: relative; overflow: hidden; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 2px 10px rgba(0,80,160,0.08); }
@@ -96,30 +109,46 @@
   .day-card.risk-high::before { background: var(--red); }
   .day-card.risk-med::before  { background: var(--amber); }
   .day-card.risk-low::before  { background: var(--green); }
+  .day-card.risk-none::before { background: var(--text3); }
+  
   .day-name { font-size: 12px; color: var(--text2); font-weight: 500; text-transform: uppercase; letter-spacing: 0.6px; }
   .day-date { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--text); margin-bottom: 10px; font-weight: 400; }
+  
   .risk-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; margin-bottom: 14px; letter-spacing: 0.4px; text-transform: uppercase; }
   .risk-badge.high { background: var(--red-bg); color: var(--red-text); border: 1px solid rgba(204,40,40,0.20); }
   .risk-badge.med  { background: var(--amber-bg); color: var(--amber-text); border: 1px solid rgba(184,112,0,0.20); }
   .risk-badge.low  { background: var(--green-bg); color: var(--green-text); border: 1px solid rgba(26,122,72,0.20); }
+  .risk-badge.none { background: var(--surface3); color: var(--text2); border: 1px solid var(--border2); }
+  
   .risk-badge::before { content:''; display: inline-block; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
   .risk-badge.high::before { background: var(--red); }
   .risk-badge.med::before  { background: var(--amber); }
   .risk-badge.low::before  { background: var(--green); }
+  .risk-badge.none::before { background: var(--text3); }
+  
   .section-title { font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; margin-top: 2px; }
   .stat-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 13.5px; margin-bottom: 6px; }
   .stat-label { color: var(--text2); font-size: 13px; }
-  .stat-val { font-weight: 600; color: var(--text); }
-  .stat-val.cold { color: var(--frost-blue); }
-  .stat-val.freezing { color: var(--red); }
-  .wind-dir { font-size: 11px; font-weight: 400; color: var(--text3); margin-left: 4px; }
+  
+  /* Standardised Temp Colours matching Key */
+  .stat-val { font-weight: 600; }
+  .stat-val.high-text { color: var(--red); }
+  .stat-val.med-text  { color: var(--amber); }
+  .stat-val.low-text  { color: var(--green); }
+  .stat-val.none-text { color: var(--text); }
+  
+  .wind-dir { font-size: 11px; font-weight: 400; color: inherit; opacity: 0.7; margin-left: 4px; }
   .divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+  
   .frost-type-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); margin-bottom: 6px; }
   .frost-type-row:last-child { margin-bottom: 0; }
+  
   .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
   .dot.yes   { background: var(--red); }
   .dot.maybe { background: var(--amber); }
-  .dot.no    { background: var(--green); }
+  .dot.low   { background: var(--green); }
+  .dot.none  { background: var(--text3); }
+  
   .gh-delta { font-size: 12px; color: var(--text2); margin-top: 3px; }
 
   /* ── Info boxes ── */
@@ -149,16 +178,17 @@
   @media print {
     .hero { background: none !important; color: #000 !important; border-bottom: 2px solid #000; padding: 1rem 0; }
     .hero h1, .hero-sub, .hero h1 span { color: #000 !important; }
-    .search-wrap, .nav-btn, .nav-indicator, .share-btn, .share-copied, .footer, .loading { display: none !important; }
+    
+    /* Crucial hiding for print clarity */
+    .search-wrap, .nav-controls-wrap, .share-btn, .share-copied, .footer, .loading, .legend, .info-box { display: none !important; }
+    
     .tonight-banner { border: 1px solid #ccc !important; background: #f9f9f9 !important; border-left: 4px solid #000 !important; box-shadow: none !important; }
     .day-card { box-shadow: none !important; border: 1px solid #ccc !important; break-inside: avoid; }
     .day-grid { display: grid !important; grid-template-columns: repeat(3,1fr) !important; }
-    .grid-nav { display: block !important; }
     #output { display: block !important; }
     .page { padding: 0.5rem !important; }
     .cover-advice { border: 1px solid #ccc !important; color: #000 !important; background: #eee !important; }
     a { text-decoration: none !important; color: #000 !important; }
-    .info-box { border: 1px solid #ccc !important; background: #f9f9f9 !important; }
   }
 </style>
 </head>
@@ -192,7 +222,6 @@
       </div>
     </div>
 
-    <!-- Tonight banner -->
     <div class="tonight-banner" id="tonight-banner">
       <div class="tonight-icon" id="tonight-icon">🌙</div>
       <div class="tonight-body">
@@ -207,19 +236,23 @@
     </div>
 
     <div class="legend">
-      <span class="legend-item"><span class="legend-dot" style="background:var(--red)"></span>High risk</span>
-      <span class="legend-item"><span class="legend-dot" style="background:var(--amber)"></span>Medium risk</span>
-      <span class="legend-item"><span class="legend-dot" style="background:var(--green)"></span>Low risk</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--red)"></span>High risk (≤ 0°C)</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--amber)"></span>Medium risk (≤ 1.5°C)</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--green)"></span>Low risk (≤ 3.0°C)</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--text3)"></span>No risk (> 3.0°C)</span>
     </div>
 
-    <div class="grid-nav">
-      <button class="nav-btn" id="nav-prev" onclick="shiftOffset(-1)" title="Previous day">&#8592;</button>
-      <div class="day-grid" id="day-grid"></div>
-      <button class="nav-btn" id="nav-next" onclick="shiftOffset(1)" title="Next day">&#8594;</button>
+    <div class="nav-controls-wrap">
+      <div class="nav-controls">
+        <button class="nav-btn" id="nav-prev" onclick="shiftOffset(-1)" title="Previous day">&#8592;</button>
+        <p class="nav-indicator" id="nav-indicator"></p>
+        <button class="nav-btn" id="nav-next" onclick="shiftOffset(1)" title="Next day">&#8594;</button>
+      </div>
     </div>
-    <p class="nav-indicator" id="nav-indicator"></p>
+    
+    <div class="day-grid" id="day-grid"></div>
 
-    <div class="info-box blue-note" style="margin-bottom:1.25rem">
+    <div class="info-box blue-note" style="margin-top:1.25rem; margin-bottom:1.25rem">
       <p><strong>Greenhouse buffer:</strong> An unheated greenhouse typically stays 2–5°C warmer than outside air on a calm, clear night. This buffer shrinks on windy nights — potentially only 1–2°C when it's gusty. The estimated minimum inside is wind-adjusted. Use it to judge whether seedlings need extra protection such as fleece, bubble wrap lining, or a heated propagator.</p>
     </div>
 
@@ -255,6 +288,20 @@ var forecastDays = [];
 var offset = 0;
 var currentLocName = '';
 
+// Dynamically handle mobile vs desktop layout sizes
+function getCardsPerPage() {
+  return window.innerWidth <= 620 ? 1 : 3;
+}
+
+window.addEventListener('resize', function() {
+  if (forecastDays.length === 0) return;
+  var cardsPerPage = getCardsPerPage();
+  if (offset + cardsPerPage > forecastDays.length) {
+    offset = Math.max(0, forecastDays.length - cardsPerPage);
+  }
+  renderCards();
+});
+
 function dewpoint(t, rh) {
   var a = 17.27, b = 237.7;
   var g = (a * t / (b + t)) + Math.log(rh / 100);
@@ -266,29 +313,65 @@ function windDir(deg) {
   return COMPASS[Math.round(deg / 22.5) % 16];
 }
 
+// Strictly bind colour coding to the legend specifications
+function tempClass(t) { 
+  if (t <= 0) return 'high-text';
+  if (t <= 1.5) return 'med-text';
+  if (t <= 3) return 'low-text';
+  return 'none-text'; 
+}
+
 function assessFrost(minT, wind, rh) {
   var dp           = dewpoint(minT, rh);
+  
+  // 1. Initial meteorological assessment
   var airFrost     = minT <= 0;
   var airPossible  = minT <= 1.5;
-  var groundFrost  = minT <= 3;
-  var groundLikely = groundFrost && wind < 8;
+  
+  // Ground frost is possible if air is freezing, OR if it's up to 3C with light-ish winds
+  var groundFrost  = minT <= 0 || (minT <= 3 && wind < 15); 
+  // Ground frost is LIKELY if air is freezing, OR if it's up to 3C with very still winds
+  var groundLikely = minT <= 0 || (minT <= 3 && wind < 8); 
+  
   var hoarFrost    = dp < 0 && wind < 10;
   var hoarPossible = dp < 0.5 && wind < 15;
+  
+  // 2. Score the overall risk
   var score = 0;
   if (airFrost)          score += 3;
   else if (airPossible)  score += 2;
   else if (groundLikely) score += 1;
   if (groundLikely)      score += 1;
   if (hoarFrost)         score += 1;
+  
+  var level = 'none';
+  if (score >= 3) level = 'high';
+  else if (score >= 2) level = 'med';
+  // If ANY frost is even possible, bump the overall level to at least 'low'
+  else if (score >= 1 || groundFrost || hoarPossible) level = 'low'; 
+
+  // 3. Absolute override for warm temperatures
+  if (minT > 3) {
+    level = 'none';
+  }
+
+  // 4. THE UI FAIL-SAFE: Prevent text contradictions
+  // If the master level is 'none', force all granular flags to false 
+  // so the UI always says "unlikely" across the board.
+  if (level === 'none') {
+    airFrost = false; airPossible = false;
+    groundFrost = false; groundLikely = false;
+    hoarFrost = false; hoarPossible = false;
+  }
+
   return {
-    level: score >= 3 ? 'high' : score >= 1 ? 'med' : 'low',
+    level: level,
     airFrost: airFrost, airPossible: airPossible,
     groundFrost: groundFrost, groundLikely: groundLikely,
     hoarFrost: hoarFrost, hoarPossible: hoarPossible, dp: dp
   };
 }
 
-function tempClass(t) { return t <= 0 ? 'freezing' : t <= 3 ? 'cold' : ''; }
 function fmt(t) { return (Math.round(t * 10) / 10).toFixed(1) + '\u00b0C'; }
 
 function renderTonightBanner() {
@@ -301,21 +384,21 @@ function renderTonightBanner() {
   var banner = document.getElementById('tonight-banner');
   banner.className = 'tonight-banner risk-' + frost.level;
 
-  var icons = { high: '🥶', med: '🌡️', low: '🌿' };
+  var icons = { high: '🥶', med: '🌡️', low: '🌿', none: '✅' };
   document.getElementById('tonight-icon').textContent = icons[frost.level];
 
-  var headings = { high: 'Frost risk tonight — protect your plants', med: 'Frost possible tonight — keep an eye on it', low: 'No frost expected tonight' };
+  var headings = { high: 'Frost risk tonight — protect your plants', med: 'Frost possible tonight — keep an eye on it', low: 'Low frost risk tonight', none: 'No frost expected tonight' };
   document.getElementById('tonight-heading').textContent = headings[frost.level];
 
   var parts = ['Min ' + fmt(day.minT), 'Wind ' + Math.round(day.wind) + ' km/h ' + windDir(day.windDir), 'Greenhouse est. ' + fmt(ghMin)];
   document.getElementById('tonight-detail').textContent = parts.join(' · ');
 
   var ca = document.getElementById('cover-advice');
-  var coverClasses = { high: 'cover-advice cover-yes', med: 'cover-advice cover-maybe', low: 'cover-advice cover-no' };
+  var coverClasses = { high: 'cover-advice cover-yes', med: 'cover-advice cover-maybe', low: 'cover-advice cover-no', none: 'cover-advice cover-none' };
   ca.className = coverClasses[frost.level];
 
-  var mains = { high: '🪴 Cover plants', med: '👀 Monitor closely', low: '✓ No action needed' };
-  var subs  = { high: 'Frost likely tonight', med: 'Frost possible tonight', low: 'Safe tonight' };
+  var mains = { high: '🪴 Cover plants', med: '👀 Monitor closely', low: '✓ Minimal action', none: '✓ No action needed' };
+  var subs  = { high: 'Frost likely tonight', med: 'Frost possible tonight', low: 'Slight risk tonight', none: 'Safe tonight' };
   document.getElementById('cover-main').textContent = mains[frost.level];
   document.getElementById('cover-sub').textContent  = subs[frost.level];
 }
@@ -323,7 +406,8 @@ function renderTonightBanner() {
 function renderCards() {
   var grid  = document.getElementById('day-grid');
   var total = forecastDays.length;
-  var visible = forecastDays.slice(offset, offset + 3);
+  var cardsPerPage = getCardsPerPage();
+  var visible = forecastDays.slice(offset, offset + cardsPerPage);
   grid.innerHTML = '';
 
   visible.forEach(function(day) {
@@ -335,13 +419,19 @@ function renderCards() {
     var precip = day.precip;
     var wdir   = day.windDir;
     var frost  = assessFrost(minT, wind, rh);
-    var labels = { high: 'HIGH FROST RISK', med: 'MEDIUM FROST RISK', low: 'LOW FROST RISK' };
-    var airDot = frost.airFrost    ? 'yes' : frost.airPossible   ? 'maybe' : 'no';
+    
+    var labels = { high: 'HIGH FROST RISK', med: 'MEDIUM FROST RISK', low: 'LOW FROST RISK', none: 'NO FROST RISK' };
+    
+    // Dot allocation aligns cleanly with risk representation
+    var airDot = frost.airFrost    ? 'yes' : frost.airPossible   ? 'maybe' : 'none';
     var airTxt = frost.airFrost    ? 'Air frost likely'          : frost.airPossible   ? 'Air frost possible'    : 'Air frost unlikely';
-    var gDot   = frost.groundLikely? 'yes' : frost.groundFrost   ? 'maybe' : 'no';
+    
+    var gDot   = frost.groundLikely? 'yes' : frost.groundFrost   ? 'maybe' : 'none';
     var gTxt   = frost.groundLikely? 'Ground frost likely'       : frost.groundFrost   ? 'Ground frost possible' : 'Ground frost unlikely';
-    var hDot   = frost.hoarFrost   ? 'yes' : frost.hoarPossible  ? 'maybe' : 'no';
+    
+    var hDot   = frost.hoarFrost   ? 'yes' : frost.hoarPossible  ? 'maybe' : 'none';
     var hTxt   = frost.hoarFrost   ? 'Hoar frost likely'         : frost.hoarPossible  ? 'Hoar frost possible'   : 'Hoar frost unlikely';
+    
     var ghBuffer = wind > 20 ? 1.5 : wind > 10 ? 2.5 : 3.5;
     var ghMin    = minT + ghBuffer;
     var windTxt  = Math.round(wind) + ' km/h';
@@ -355,7 +445,7 @@ function renderCards() {
         '<div class="section-title">Outside</div>' +
         '<div class="stat-row"><span class="stat-label">Min temp</span><span class="stat-val ' + tempClass(minT) + '">' + fmt(minT) + '</span></div>' +
         '<div class="stat-row"><span class="stat-label">Max temp</span><span class="stat-val">' + fmt(maxT) + '</span></div>' +
-        '<div class="stat-row"><span class="stat-label">Dewpoint</span><span class="stat-val ' + (frost.hoarFrost ? 'freezing' : frost.hoarPossible ? 'cold' : '') + '">' + fmt(frost.dp) + '</span></div>' +
+        '<div class="stat-row"><span class="stat-label">Dewpoint</span><span class="stat-val ' + tempClass(frost.dp) + '">' + fmt(frost.dp) + '</span></div>' +
         '<div class="stat-row"><span class="stat-label">Wind (max)</span><span class="stat-val">' + windTxt + dirTxt + '</span></div>' +
         '<div class="stat-row"><span class="stat-label">Humidity</span><span class="stat-val">' + Math.round(rh) + '%</span></div>' +
         '<div class="stat-row"><span class="stat-label">Rain chance</span><span class="stat-val">' + Math.round(precip) + '%</span></div>' +
@@ -371,13 +461,21 @@ function renderCards() {
   });
 
   document.getElementById('nav-prev').disabled = offset === 0;
-  document.getElementById('nav-next').disabled = offset + 3 >= total;
-  document.getElementById('nav-indicator').textContent = 'Days ' + (offset + 1) + '\u2013' + Math.min(offset + 3, total) + ' of ' + total;
+  document.getElementById('nav-next').disabled = offset + cardsPerPage >= total;
+  
+  if (cardsPerPage === 1) {
+    document.getElementById('nav-indicator').textContent = 'Day ' + (offset + 1) + ' of ' + total;
+  } else {
+    document.getElementById('nav-indicator').textContent = 'Days ' + (offset + 1) + '\u2013' + Math.min(offset + cardsPerPage, total) + ' of ' + total;
+  }
 }
 
 function shiftOffset(delta) {
+  var cardsPerPage = getCardsPerPage();
+  var maxOffset = forecastDays.length - cardsPerPage;
   var n = offset + delta;
-  if (n < 0 || n + 3 > forecastDays.length) return;
+  if (n < 0) n = 0;
+  if (n > maxOffset) n = maxOffset;
   offset = n;
   renderCards();
 }
