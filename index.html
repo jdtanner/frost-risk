@@ -84,9 +84,9 @@
   .cover-advice .cover-sub { font-size: 11px; font-weight: 400; opacity: 0.9; margin-top: 2px; }
 
   /* ── Legend ── */
-  .legend { display: flex; gap: 18px; font-size: 12px; color: var(--text2); margin-bottom: 1rem; flex-wrap: wrap; }
-  .legend-item { display: flex; align-items: center; gap: 5px; }
-  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .legend { display: flex; gap: 18px; font-size: 13px; color: var(--text); flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 
   /* ── Nav + grid ── */
   .nav-controls-wrap { display: flex; justify-content: center; margin-bottom: 1.5rem; }
@@ -97,7 +97,7 @@
   .nav-btn:disabled { opacity: 0.25; cursor: default; background: var(--surface); color: var(--text3); box-shadow: none; }
   .nav-indicator { margin: 0; font-size: 13px; font-weight: 600; color: var(--text2); min-width: 90px; text-align: center; }
   
-  .day-grid { flex: 1; display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+  .day-grid { flex: 1; display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 2rem; }
   @media (max-width: 620px) { 
     .day-grid { grid-template-columns: 1fr; } 
   }
@@ -152,12 +152,11 @@
   .gh-delta { font-size: 12px; color: var(--text2); margin-top: 3px; }
 
   /* ── Info boxes ── */
-  .info-box { border-radius: var(--radius); padding: 1rem 1.25rem; font-size: 13.5px; color: var(--text); line-height: 1.75; margin-bottom: 1rem; }
-  .info-box.blue-note { background: var(--surface); border: 1px solid var(--border2); border-left: 3px solid var(--frost-blue); }
+  .info-box { border-radius: var(--radius); padding: 1.25rem 1.5rem; font-size: 13.5px; color: var(--text); line-height: 1.75; margin-bottom: 1rem; }
   .info-box.explainer { background: var(--surface2); border: 1px solid var(--border2); }
   .info-box p { margin-bottom: 0.5rem; }
   .info-box p:last-child { margin-bottom: 0; }
-  .info-box strong { font-weight: 600; }
+  .info-box strong { font-weight: 600; color: var(--text); }
 
   /* ── Loading ── */
   .loading { font-size: 14px; color: var(--text2); padding: 2.5rem 0; display: none; align-items: center; gap: 10px; }
@@ -184,7 +183,7 @@
     
     .tonight-banner { border: 1px solid #ccc !important; background: #f9f9f9 !important; border-left: 4px solid #000 !important; box-shadow: none !important; }
     .day-card { box-shadow: none !important; border: 1px solid #ccc !important; break-inside: avoid; }
-    .day-grid { display: grid !important; grid-template-columns: repeat(3,1fr) !important; }
+    .day-grid { display: grid !important; grid-template-columns: repeat(3,1fr) !important; margin-bottom: 0 !important; }
     #output { display: block !important; }
     .page { padding: 0.5rem !important; }
     .cover-advice { border: 1px solid #ccc !important; color: #000 !important; background: #eee !important; }
@@ -235,13 +234,6 @@
       </div>
     </div>
 
-    <div class="legend">
-      <span class="legend-item"><span class="legend-dot" style="background:var(--red)"></span>High risk (≤ 0°C)</span>
-      <span class="legend-item"><span class="legend-dot" style="background:var(--amber)"></span>Medium risk (≤ 1.5°C)</span>
-      <span class="legend-item"><span class="legend-dot" style="background:var(--green)"></span>Low risk (≤ 3.0°C)</span>
-      <span class="legend-item"><span class="legend-dot" style="background:var(--text3)"></span>No risk (> 3.0°C)</span>
-    </div>
-
     <div class="nav-controls-wrap">
       <div class="nav-controls">
         <button class="nav-btn" id="nav-prev" onclick="shiftOffset(-1)" title="Previous day">&#8592;</button>
@@ -252,17 +244,25 @@
     
     <div class="day-grid" id="day-grid"></div>
 
-    <div class="info-box blue-note" style="margin-top:1.25rem; margin-bottom:1.25rem">
-      <p><strong>Greenhouse buffer:</strong> An unheated greenhouse typically stays 2–5°C warmer than outside air on a calm, clear night. This buffer shrinks on windy nights — potentially only 1–2°C when it's gusty. The estimated minimum inside is wind-adjusted. Use it to judge whether seedlings need extra protection such as fleece, bubble wrap lining, or a heated propagator.</p>
-    </div>
-
     <div class="info-box explainer">
+      
+      <div class="legend" style="margin-bottom: 0.85rem;">
+        <span class="legend-item"><span class="legend-dot" style="background:var(--red)"></span><strong>High risk</strong> (≤ 0°C)</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--amber)"></span><strong>Medium risk</strong> (≤ 1.5°C)</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--green)"></span><strong>Low risk</strong> (≤ 3.0°C)</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--text3)"></span><strong>No risk</strong> (> 3.0°C)</span>
+      </div>
+      
+      <hr class="divider" style="margin-bottom: 0.85rem;">
+      
+      <p><strong>Greenhouse buffer</strong> — an unheated greenhouse typically stays 2–5°C warmer than outside air on a calm, clear night. This buffer shrinks on windy nights (potentially only 1–2°C when gusty). The estimated minimum inside is wind-adjusted. Use it to judge whether seedlings need extra protection such as fleece, bubble wrap lining, or a heated propagator.</p>
       <p><strong>Air frost</strong> — air temperature at 1.2 m drops to 0°C or below. Directly damaging to unprotected seedlings.</p>
       <p><strong>Ground frost</strong> — the ground surface reaches 0°C. Can occur when air temp is still 2–3°C, especially on still clear nights when the ground radiates heat rapidly. Wind significantly suppresses ground frost risk.</p>
       <p><strong>Hoar frost</strong> — ice crystals form on surfaces when dewpoint falls below 0°C and wind is calm. Calculated from temperature and humidity. Indicates a very cold, still night.</p>
       <p><strong>Dewpoint</strong> — the temperature at which moisture in the air would condense. A sub-zero dewpoint indicates hoar frost potential.</p>
       <p><strong>Wind direction</strong> — shown as a compass bearing. In the UK, northerly and easterly winds (N, NE, E) tend to bring colder air than southwesterlies.</p>
     </div>
+    
   </div>
 </div>
 
