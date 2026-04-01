@@ -4,12 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Frost Risk Checker</title>
+<meta name="description" content="16-day air, ground and hoar frost risk for any UK location. Helpful for greenhouses, seedlings and tender plants.">
+<meta property="og:title" content="Frost Risk Checker">
+<meta property="og:description" content="16-day air, ground and hoar frost risk for any UK location. Helpful for greenhouses, seedlings and tender plants.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --night: #f0f7fc; --night2: #e2eef8; --night3: #cfe2f4;
-    --frost-blue: #1a7abf; --frost-pale: #1060a0;
+    --frost-blue: #1a7abf;
     --surface: #ffffff; --surface2: #f4f9fd; --surface3: #e6f1fa;
     --border: rgba(0,80,160,0.10); --border2: rgba(0,80,160,0.22);
     --text: #0d2137; --text2: #2e5070; --text3: #5a82a0;
@@ -39,7 +44,11 @@
   .check-btn:hover { background: #1e8fd4; }
   .check-btn:active { transform: scale(0.97); }
   .check-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+  .search-meta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; }
   .hint { font-size: 12px; color: var(--text3); }
+  .locate-btn { background: none; border: none; color: var(--frost-blue); font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer; padding: 0; white-space: nowrap; }
+  .locate-btn:hover { text-decoration: underline; }
+  .locate-btn:disabled { opacity: 0.5; cursor: default; text-decoration: none; }
   .error { font-size: 13px; color: var(--red-text); margin-top: 0.75rem; padding: 10px 14px; background: var(--red-bg); border-radius: var(--radius-sm); border: 1px solid rgba(204,40,40,0.25); display: none; }
 
   @media (max-width: 620px) {
@@ -48,7 +57,7 @@
   }
 
   /* ── Page ── */
-  .page { max-width: 860px; margin: 0 auto; padding: 1.75rem 1rem 3rem; }
+  .page { max-width: 860px; margin: 0 auto; padding: 1.75rem 1rem 1.5rem; }
   .loc-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 1.25rem; }
   .loc-label { font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 6px; }
   .loc-label::before { content:''; display: inline-block; width: 6px; height: 6px; background: var(--frost-blue); border-radius: 50%; flex-shrink: 0; }
@@ -72,16 +81,6 @@
   .tonight-label { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text3); margin-bottom: 2px; }
   .tonight-heading { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--text); font-weight: 400; margin-bottom: 4px; }
   .tonight-detail { font-size: 13px; color: var(--text2); }
-  
-  .cover-advice {
-    flex-shrink: 0; padding: 0.6rem 1.1rem; border-radius: var(--radius-sm);
-    font-size: 13px; font-weight: 600; text-align: center; min-width: 140px;
-  }
-  .cover-yes  { background: var(--red); color: #fff; }
-  .cover-maybe { background: var(--amber); color: #fff; }
-  .cover-no   { background: var(--green); color: #fff; }
-  .cover-none { background: var(--text3); color: #fff; }
-  .cover-advice .cover-sub { font-size: 11px; font-weight: 400; opacity: 0.9; margin-top: 2px; }
 
   /* ── Legend ── */
   .legend { display: flex; gap: 18px; font-size: 13px; color: var(--text); flex-wrap: wrap; }
@@ -130,12 +129,7 @@
   .stat-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 13.5px; margin-bottom: 6px; }
   .stat-label { color: var(--text2); font-size: 13px; }
   
-  /* Standardised Temp Colours matching Key */
   .stat-val { font-weight: 600; }
-  .stat-val.high-text { color: var(--red); }
-  .stat-val.med-text  { color: var(--amber); }
-  .stat-val.low-text  { color: var(--green); }
-  .stat-val.none-text { color: var(--text); }
   
   .wind-dir { font-size: 11px; font-weight: 400; color: inherit; opacity: 0.7; margin-left: 4px; }
   .divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
@@ -146,10 +140,11 @@
   .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
   .dot.yes   { background: var(--red); }
   .dot.maybe { background: var(--amber); }
-  .dot.low   { background: var(--green); }
   .dot.none  { background: var(--text3); }
   
   .gh-delta { font-size: 12px; color: var(--text2); margin-top: 3px; }
+  .accuracy-note { font-size: 10px; color: var(--amber-text); background: var(--amber-bg); border: 1px solid rgba(184,112,0,0.20); border-radius: 4px; padding: 2px 7px; margin-bottom: 8px; display: inline-block; }
+  .today-pill { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; background: var(--frost-blue); color: #fff; border-radius: 20px; padding: 1px 7px; margin-left: 6px; vertical-align: middle; }
 
   /* ── Info boxes ── */
   .info-box { border-radius: var(--radius); padding: 1.25rem 1.5rem; font-size: 13.5px; color: var(--text); line-height: 1.75; margin-bottom: 1rem; }
@@ -157,6 +152,11 @@
   .info-box p { margin-bottom: 0.5rem; }
   .info-box p:last-child { margin-bottom: 0; }
   .info-box strong { font-weight: 600; color: var(--text); }
+  .info-box summary { list-style: none; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text2); display: flex; align-items: center; gap: 8px; user-select: none; }
+  .info-box summary::-webkit-details-marker { display: none; }
+  .info-box summary::before { content: '+'; font-size: 15px; font-weight: 700; color: var(--frost-blue); width: 14px; text-align: center; flex-shrink: 0; }
+  .info-box[open] summary::before { content: '\2212'; }
+  .info-box .explainer-body { margin-top: 1rem; }
 
   /* ── Loading ── */
   .loading { font-size: 14px; color: var(--text2); padding: 2.5rem 0; display: none; align-items: center; gap: 10px; }
@@ -186,7 +186,6 @@
     .day-grid { display: grid !important; grid-template-columns: repeat(3,1fr) !important; margin-bottom: 0 !important; }
     #output { display: block !important; }
     .page { padding: 0.5rem !important; }
-    .cover-advice { border: 1px solid #ccc !important; color: #000 !important; background: #eee !important; }
     a { text-decoration: none !important; color: #000 !important; }
   }
 </style>
@@ -196,17 +195,20 @@
 <div class="hero">
   <span class="hero-icon">❄️</span>
   <h1>Frost <span>Risk</span> Checker</h1>
-  <p class="hero-sub">7-day air, ground &amp; hoar frost risk for any UK location — helpful for greenhouses, seedlings and tender plants</p>
+  <p class="hero-sub">16-day air, ground &amp; hoar frost risk for any UK location — helpful for greenhouses, seedlings and tender plants</p>
 </div>
 
 <div class="search-wrap">
   <div class="search-row">
-    <input type="text" id="loc" placeholder="e.g. NG16, NG16 4DE, Langley Mill, Matlock…" />
+    <input type="text" id="loc" placeholder="e.g. NG16, NG16 4DE, Langley Mill, Matlock…" autocomplete="off" />
     <button class="check-btn" id="btn" onclick="checkFrost()">Check frost</button>
   </div>
-  <p class="hint">Accepts full or partial UK postcodes, or place names</p>
-  <div id="error" class="error"></div>
-  <div id="loading" class="loading"><div class="spinner"></div><span>Fetching forecast…</span></div>
+  <div class="search-meta">
+    <p class="hint">Accepts full or partial UK postcodes, or place names</p>
+    <button class="locate-btn" id="locate-btn" onclick="useMyLocation()">&#128205; Use my location</button>
+  </div>
+  <div id="error" class="error" role="alert"></div>
+  <div id="loading" class="loading" role="status"><div class="spinner" aria-hidden="true"></div><span>Fetching forecast…</span></div>
 </div>
 
 <div class="page">
@@ -215,9 +217,10 @@
     <div class="loc-row">
       <p class="loc-label" id="loc-label"></p>
       <div style="display:flex;gap:8px;align-items:center">
+        <button class="share-btn" onclick="refresh()" id="refresh-btn">&#8635; Refresh</button>
         <button class="share-btn" onclick="shareUrl()" id="share-btn">&#128279; Copy link</button>
         <span class="share-copied" id="share-copied">&#10003; Copied!</span>
-        <button class="share-btn" onclick="window.print()" style="color:var(--text2)">&#128438; Print</button>
+        <button class="share-btn" onclick="window.print()" style="color:var(--text2)">&#128424; Print</button>
       </div>
     </div>
 
@@ -228,41 +231,41 @@
         <div class="tonight-heading" id="tonight-heading"></div>
         <div class="tonight-detail" id="tonight-detail"></div>
       </div>
-      <div class="cover-advice" id="cover-advice">
-        <div id="cover-main"></div>
-        <div class="cover-sub" id="cover-sub"></div>
-      </div>
     </div>
 
     <div class="nav-controls-wrap">
       <div class="nav-controls">
-        <button class="nav-btn" id="nav-prev" onclick="shiftOffset(-1)" title="Previous day">&#8592;</button>
+        <button class="nav-btn" id="nav-prev" onclick="shiftOffset(-1)" title="Previous day" aria-label="Previous day">&#8592;</button>
         <p class="nav-indicator" id="nav-indicator"></p>
-        <button class="nav-btn" id="nav-next" onclick="shiftOffset(1)" title="Next day">&#8594;</button>
+        <button class="nav-btn" id="nav-next" onclick="shiftOffset(1)" title="Next day" aria-label="Next day">&#8594;</button>
       </div>
     </div>
     
     <div class="day-grid" id="day-grid"></div>
 
-    <div class="info-box explainer">
-      
+    <details class="info-box explainer">
+      <summary>Understanding the forecast</summary>
+      <div class="explainer-body">
       <div class="legend" style="margin-bottom: 0.85rem;">
-        <span class="legend-item"><span class="legend-dot" style="background:var(--red)"></span><strong>High risk</strong> (≤ 0°C)</span>
-        <span class="legend-item"><span class="legend-dot" style="background:var(--amber)"></span><strong>Medium risk</strong> (≤ 1.5°C)</span>
-        <span class="legend-item"><span class="legend-dot" style="background:var(--green)"></span><strong>Low risk</strong> (≤ 3.0°C)</span>
-        <span class="legend-item"><span class="legend-dot" style="background:var(--text3)"></span><strong>No risk</strong> (> 3.0°C)</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--red)"></span><strong>High risk</strong> — freezing air likely</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--amber)"></span><strong>Medium risk</strong> — frost likely on clear, still night</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--green)"></span><strong>Low risk</strong> — some frost possible</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--text3)"></span><strong>No risk</strong> — frost unlikely</span>
       </div>
       
       <hr class="divider" style="margin-bottom: 0.85rem;">
       
-      <p><strong>Greenhouse buffer</strong> — an unheated greenhouse typically stays 2–5°C warmer than outside air on a calm, clear night. This buffer shrinks on windy nights (potentially only 1–2°C when gusty). The estimated minimum inside is wind-adjusted. Use it to judge whether seedlings need extra protection such as fleece, bubble wrap lining, or a heated propagator.</p>
+      <p><strong>Greenhouse buffer</strong> — an unheated greenhouse typically stays 2–5°C warmer than outside air on a calm, clear night. The buffer shrinks in windy conditions and on overcast nights (when outside temperatures stay higher anyway), and is slightly larger on clear nights when the outside air drops faster. The estimated minimum inside is adjusted for both wind and cloud cover. Use it to judge whether seedlings need extra protection such as fleece, bubble wrap lining, or a heated propagator.</p>
       <p><strong>Air frost</strong> — air temperature at 1.2 m drops to 0°C or below. Directly damaging to unprotected seedlings.</p>
-      <p><strong>Ground frost</strong> — the ground surface reaches 0°C. Can occur when air temp is still 2–3°C, especially on still clear nights when the ground radiates heat rapidly. Wind significantly suppresses ground frost risk.</p>
-      <p><strong>Hoar frost</strong> — ice crystals form on surfaces when dewpoint falls below 0°C and wind is calm. Calculated from temperature and humidity. Indicates a very cold, still night.</p>
+      <p><strong>Ground frost</strong> — the ground surface reaches 0°C. Occurs when cold, still, clear-sky conditions allow the ground to radiate heat rapidly. Both wind and cloud cover significantly suppress ground frost risk — an overcast or breezy night at 2°C may see no ground frost at all.</p>
+      <p><strong>Hoar frost</strong> — ice crystals form on surfaces when dewpoint falls below 0°C, wind is calm, and skies are clear. It is a purely radiative phenomenon and requires clear skies to form. Calculated from temperature, humidity, wind speed, and cloud cover.</p>
       <p><strong>Dewpoint</strong> — the temperature at which moisture in the air would condense. A sub-zero dewpoint indicates hoar frost potential.</p>
       <p><strong>Wind direction</strong> — shown as a compass bearing. In the UK, northerly and easterly winds (N, NE, E) tend to bring colder air than southwesterlies.</p>
-    </div>
-    
+      <p><strong>Cloud cover</strong> — clear skies allow the ground and air to radiate heat rapidly into space, significantly amplifying frost risk on borderline nights. Overcast conditions act as a thermal blanket and strongly suppress ground and hoar frost. Cloud cover is factored into the ground frost and hoar frost assessments above.</p>
+      <p><strong>Rain chance</strong> — a high rain probability generally indicates cloud cover, which keeps surface temperatures up and suppresses radiation frost. Nights expecting rain are far less likely to see ground or hoar frost.</p>
+      </div>
+    </details>
+
   </div>
 </div>
 
@@ -286,7 +289,9 @@ var COMPASS = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W
 
 var forecastDays = [];
 var offset = 0;
-var currentLocName = '';
+var currentLat   = null, currentLon = null;
+var currentLabel = '';
+var fetchedAt    = null;
 
 // Dynamically handle mobile vs desktop layout sizes
 function getCardsPerPage() {
@@ -313,29 +318,29 @@ function windDir(deg) {
   return COMPASS[Math.round(deg / 22.5) % 16];
 }
 
-// Strictly bind colour coding to the legend specifications
-function tempClass(t) { 
-  if (t <= 0) return 'high-text';
-  if (t <= 1.5) return 'med-text';
-  if (t <= 3) return 'low-text';
-  return 'none-text'; 
+function cloudDesc(pct) {
+  if (pct < 25) return 'Clear';
+  if (pct < 60) return 'Partly cloudy';
+  return 'Overcast';
 }
 
-function assessFrost(minT, wind, rh) {
-  var dp           = dewpoint(minT, rh);
-  
+function assessFrost(minT, wind, rh, cloud) {
+  var dp          = dewpoint(minT, rh);
+  var clearNight  = cloud < 25;   // radiative cooling is maximised
+  var partlyClear = cloud < 60;   // some radiative cooling possible
+
   // 1. Initial meteorological assessment
-  var airFrost     = minT <= 0;
-  var airPossible  = minT <= 1.5;
-  
-  // Ground frost is possible if air is freezing, OR if it's up to 3C with light-ish winds
-  var groundFrost  = minT <= 0 || (minT <= 3 && wind < 15); 
-  // Ground frost is LIKELY if air is freezing, OR if it's up to 3C with very still winds
-  var groundLikely = minT <= 0 || (minT <= 3 && wind < 8); 
-  
-  var hoarFrost    = dp < 0 && wind < 10;
-  var hoarPossible = dp < 0.5 && wind < 15;
-  
+  var airFrost    = minT <= 0;
+  var airPossible = minT <= 1.5;
+
+  // Ground frost: needs still air AND clear enough skies for radiative cooling
+  var groundFrost  = minT <= 0 || (minT <= 3 && wind < 9 && partlyClear);
+  var groundLikely = minT <= 0 || (minT <= 3 && wind < 5 && clearNight);
+
+  // Hoar frost: sub-zero dewpoint + calm wind + clear skies (purely radiative)
+  var hoarFrost    = dp < 0 && wind < 6 && clearNight;
+  var hoarPossible = dp < 0.5 && wind < 9 && partlyClear;
+
   // 2. Score the overall risk
   var score = 0;
   if (airFrost)          score += 3;
@@ -343,21 +348,17 @@ function assessFrost(minT, wind, rh) {
   else if (groundLikely) score += 1;
   if (groundLikely)      score += 1;
   if (hoarFrost)         score += 1;
-  
+
   var level = 'none';
-  if (score >= 3) level = 'high';
+  if (score >= 4) level = 'high';
   else if (score >= 2) level = 'med';
   // If ANY frost is even possible, bump the overall level to at least 'low'
-  else if (score >= 1 || groundFrost || hoarPossible) level = 'low'; 
+  else if (score >= 1 || groundFrost || hoarPossible) level = 'low';
 
   // 3. Absolute override for warm temperatures
-  if (minT > 3) {
-    level = 'none';
-  }
+  if (minT > 3) level = 'none';
 
-  // 4. THE UI FAIL-SAFE: Prevent text contradictions
-  // If the master level is 'none', force all granular flags to false 
-  // so the UI always says "unlikely" across the board.
+  // 4. UI fail-safe: prevent text contradictions
   if (level === 'none') {
     airFrost = false; airPossible = false;
     groundFrost = false; groundLikely = false;
@@ -377,8 +378,10 @@ function fmt(t) { return (Math.round(t * 10) / 10).toFixed(1) + '\u00b0C'; }
 function renderTonightBanner() {
   if (!forecastDays.length) return;
   var day   = forecastDays[0];
-  var frost = assessFrost(day.minT, day.wind, day.rh);
-  var ghBuffer = day.wind > 20 ? 1.5 : day.wind > 10 ? 2.5 : 3.5;
+  var frost = assessFrost(day.minT, day.wind, day.rh, day.cloud);
+  var ghBase   = day.wind > 12 ? 1.5 : day.wind > 6 ? 2.5 : 3.5;
+  var cloudAdj = day.cloud < 25 ? 0.5 : day.cloud > 60 ? -0.5 : 0;
+  var ghBuffer = Math.max(0.5, ghBase + cloudAdj);
   var ghMin    = day.minT + ghBuffer;
 
   var banner = document.getElementById('tonight-banner');
@@ -387,20 +390,16 @@ function renderTonightBanner() {
   var icons = { high: '🥶', med: '🌡️', low: '🌿', none: '✅' };
   document.getElementById('tonight-icon').textContent = icons[frost.level];
 
-  var headings = { high: 'Frost risk tonight — protect your plants', med: 'Frost possible tonight — keep an eye on it', low: 'Low frost risk tonight', none: 'No frost expected tonight' };
+  var headings = { 
+    high: 'High frost risk tonight', 
+    med: 'Moderate frost risk tonight', 
+    low: 'Low frost risk tonight', 
+    none: 'No frost expected tonight' 
+  };
   document.getElementById('tonight-heading').textContent = headings[frost.level];
 
-  var parts = ['Min ' + fmt(day.minT), 'Wind ' + Math.round(day.wind) + ' km/h ' + windDir(day.windDir), 'Greenhouse est. ' + fmt(ghMin)];
+  var parts = ['Min ' + fmt(day.minT), 'Wind ' + Math.round(day.wind) + ' mph ' + windDir(day.windDir), 'Cloud ' + Math.round(day.cloud) + '% (' + cloudDesc(day.cloud) + ')', 'Greenhouse est. ' + fmt(ghMin)];
   document.getElementById('tonight-detail').textContent = parts.join(' · ');
-
-  var ca = document.getElementById('cover-advice');
-  var coverClasses = { high: 'cover-advice cover-yes', med: 'cover-advice cover-maybe', low: 'cover-advice cover-no', none: 'cover-advice cover-none' };
-  ca.className = coverClasses[frost.level];
-
-  var mains = { high: '🪴 Cover plants', med: '👀 Monitor closely', low: '✓ Minimal action', none: '✓ No action needed' };
-  var subs  = { high: 'Frost likely tonight', med: 'Frost possible tonight', low: 'Slight risk tonight', none: 'Safe tonight' };
-  document.getElementById('cover-main').textContent = mains[frost.level];
-  document.getElementById('cover-sub').textContent  = subs[frost.level];
 }
 
 function renderCards() {
@@ -408,57 +407,67 @@ function renderCards() {
   var total = forecastDays.length;
   var cardsPerPage = getCardsPerPage();
   var visible = forecastDays.slice(offset, offset + cardsPerPage);
-  grid.innerHTML = '';
+  var html = '';
 
-  visible.forEach(function(day) {
+  visible.forEach(function(day, idx) {
+    var dayIndex    = offset + idx;
+    var isToday     = (dayIndex === 0);
+    var isLongRange = (dayIndex >= 7);
     var dt     = day.dt;
     var minT   = day.minT;
     var maxT   = day.maxT;
     var wind   = day.wind;
     var rh     = day.rh;
+    var cloud  = day.cloud;
     var precip = day.precip;
     var wdir   = day.windDir;
-    var frost  = assessFrost(minT, wind, rh);
-    
+    var frost  = assessFrost(minT, wind, rh, cloud);
+
     var labels = { high: 'HIGH FROST RISK', med: 'MEDIUM FROST RISK', low: 'LOW FROST RISK', none: 'NO FROST RISK' };
-    
+
     // Dot allocation aligns cleanly with risk representation
     var airDot = frost.airFrost    ? 'yes' : frost.airPossible   ? 'maybe' : 'none';
     var airTxt = frost.airFrost    ? 'Air frost likely'          : frost.airPossible   ? 'Air frost possible'    : 'Air frost unlikely';
-    
+
     var gDot   = frost.groundLikely? 'yes' : frost.groundFrost   ? 'maybe' : 'none';
     var gTxt   = frost.groundLikely? 'Ground frost likely'       : frost.groundFrost   ? 'Ground frost possible' : 'Ground frost unlikely';
-    
+
     var hDot   = frost.hoarFrost   ? 'yes' : frost.hoarPossible  ? 'maybe' : 'none';
     var hTxt   = frost.hoarFrost   ? 'Hoar frost likely'         : frost.hoarPossible  ? 'Hoar frost possible'   : 'Hoar frost unlikely';
-    
-    var ghBuffer = wind > 20 ? 1.5 : wind > 10 ? 2.5 : 3.5;
+
+    var ghBase   = wind > 12 ? 1.5 : wind > 6 ? 2.5 : 3.5;
+    var cloudAdj = cloud < 25 ? 0.5 : cloud > 60 ? -0.5 : 0;
+    var ghBuffer = Math.max(0.5, ghBase + cloudAdj);
     var ghMin    = minT + ghBuffer;
-    var windTxt  = Math.round(wind) + ' km/h';
+    var windTxt  = Math.round(wind) + ' mph';
     var dirTxt   = wdir != null ? ' <span class="wind-dir">(' + windDir(wdir) + ')</span>' : '';
 
-    grid.innerHTML +=
+    html +=
       '<div class="day-card risk-' + frost.level + '">' +
-        '<div class="day-name">' + DAYS[dt.getDay()] + '</div>' +
+        '<div class="day-name">' + DAYS[dt.getDay()] + (isToday ? ' <span class="today-pill">Today</span>' : '') + '</div>' +
         '<div class="day-date">' + dt.getDate() + ' ' + MONTHS[dt.getMonth()] + '</div>' +
+        (isLongRange ? '<div class="accuracy-note">Indicative — beyond 7-day reliable range</div>' : '') +
         '<span class="risk-badge ' + frost.level + '">' + labels[frost.level] + '</span>' +
         '<div class="section-title">Outside</div>' +
-        '<div class="stat-row"><span class="stat-label">Min temp</span><span class="stat-val ' + tempClass(minT) + '">' + fmt(minT) + '</span></div>' +
+        '<div class="stat-row"><span class="stat-label">Min temp</span><span class="stat-val">' + fmt(minT) + '</span></div>' +
         '<div class="stat-row"><span class="stat-label">Max temp</span><span class="stat-val">' + fmt(maxT) + '</span></div>' +
-        '<div class="stat-row"><span class="stat-label">Dewpoint</span><span class="stat-val ' + tempClass(frost.dp) + '">' + fmt(frost.dp) + '</span></div>' +
+        '<div class="stat-row"><span class="stat-label">Dewpoint</span><span class="stat-val">' + fmt(frost.dp) + '</span></div>' +
         '<div class="stat-row"><span class="stat-label">Wind (max)</span><span class="stat-val">' + windTxt + dirTxt + '</span></div>' +
+        '<div class="stat-row"><span class="stat-label">Cloud cover</span><span class="stat-val">' + Math.round(cloud) + '% (' + cloudDesc(cloud) + ')</span></div>' +
         '<div class="stat-row"><span class="stat-label">Humidity</span><span class="stat-val">' + Math.round(rh) + '%</span></div>' +
         '<div class="stat-row"><span class="stat-label">Rain chance</span><span class="stat-val">' + Math.round(precip) + '%</span></div>' +
         '<hr class="divider">' +
         '<div class="section-title">Unheated greenhouse</div>' +
-        '<div class="stat-row"><span class="stat-label">Est. min inside</span><span class="stat-val ' + tempClass(ghMin) + '">' + fmt(ghMin) + '</span></div>' +
-        '<div class="gh-delta">+' + ghBuffer.toFixed(1) + '\u00b0C buffer (wind-adjusted)</div>' +
+        '<div class="stat-row"><span class="stat-label">Est. min inside</span><span class="stat-val">' + fmt(ghMin) + '</span></div>' +
+        '<div class="gh-delta">+' + ghBuffer.toFixed(1) + '\u00b0C buffer (wind and cloud adjusted)</div>' +
         '<hr class="divider">' +
         '<div class="frost-type-row"><span class="dot ' + airDot + '"></span>' + airTxt + '</div>' +
         '<div class="frost-type-row"><span class="dot ' + gDot   + '"></span>' + gTxt   + '</div>' +
         '<div class="frost-type-row"><span class="dot ' + hDot   + '"></span>' + hTxt   + '</div>' +
       '</div>';
   });
+
+  grid.innerHTML = html;
 
   document.getElementById('nav-prev').disabled = offset === 0;
   document.getElementById('nav-next').disabled = offset + cardsPerPage >= total;
@@ -481,7 +490,11 @@ function shiftOffset(delta) {
 }
 
 function shareUrl() {
-  var url = window.location.origin + window.location.pathname + '?location=' + encodeURIComponent(document.getElementById('loc').value.trim());
+  var name = document.getElementById('loc').value.trim();
+  var url  = window.location.origin + window.location.pathname + '?location=' + encodeURIComponent(name);
+  if (currentLat !== null && currentLon !== null) {
+    url += '&lat=' + currentLat.toFixed(4) + '&lon=' + currentLon.toFixed(4);
+  }
   navigator.clipboard.writeText(url).then(function() {
     document.getElementById('share-btn').style.display = 'none';
     var copied = document.getElementById('share-copied');
@@ -490,7 +503,51 @@ function shareUrl() {
       copied.style.display = 'none';
       document.getElementById('share-btn').style.display = 'inline-block';
     }, 2500);
+  }).catch(function() {
+    prompt('Copy this link to share:', url);
   });
+}
+
+function useMyLocation() {
+  if (!navigator.geolocation) {
+    var errEl = document.getElementById('error');
+    errEl.textContent = 'Geolocation is not supported by your browser.';
+    errEl.style.display = 'block';
+    return;
+  }
+  var btn = document.getElementById('locate-btn');
+  btn.disabled = true;
+  btn.innerHTML = 'Locating\u2026';
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      var lat = pos.coords.latitude;
+      var lon = pos.coords.longitude;
+      currentLat = lat;
+      currentLon = lon;
+      document.getElementById('loc').value          = 'My location';
+      document.getElementById('error').style.display  = 'none';
+      document.getElementById('output').style.display  = 'none';
+      document.getElementById('loading').style.display = 'flex';
+      var label = 'Your location \u00b7 ' + lat.toFixed(4) + '\u00b0N, ' + Math.abs(lon).toFixed(4) + '\u00b0' + (lon < 0 ? 'W' : 'E');
+      fetchAndShow(lat, lon, label).then(function() {
+        btn.disabled = false;
+        btn.innerHTML = '&#128205; Use my location';
+      }, function(e) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').textContent    = e.message;
+        document.getElementById('error').style.display  = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '&#128205; Use my location';
+      });
+    },
+    function() {
+      btn.disabled = false;
+      btn.innerHTML = '&#128205; Use my location';
+      var errEl = document.getElementById('error');
+      errEl.textContent = 'Location access was denied. Please type your location instead.';
+      errEl.style.display = 'block';
+    }
+  );
 }
 
 function looksLikePostcode(s) {
@@ -524,9 +581,43 @@ async function resolveLocation(query) {
   throw new Error('Could not find "' + q + '". Try a place name (e.g. Matlock) or a UK postcode (e.g. NG16 4DE).');
 }
 
+async function fetchAndShow(lat, lon, labelText) {
+  var wxRes = await fetch(
+    'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
+    '&daily=temperature_2m_min,temperature_2m_max,windspeed_10m_max,winddirection_10m_dominant,precipitation_probability_max,relative_humidity_2m_mean,cloud_cover_mean' +
+    '&forecast_days=16&timezone=Europe%2FLondon&wind_speed_unit=mph'
+  );
+  var wx = await wxRes.json();
+  if (!wx.daily) throw new Error('Forecast data unavailable. Please try again.');
+  var d = wx.daily;
+  forecastDays = [];
+  offset = 0;
+  for (var i = 0; i < d.time.length; i++) {
+    forecastDays.push({
+      dt:      new Date(d.time[i] + 'T00:00:00'),
+      minT:    d.temperature_2m_min[i],
+      maxT:    d.temperature_2m_max[i],
+      wind:    d.windspeed_10m_max[i],
+      windDir: d.winddirection_10m_dominant ? d.winddirection_10m_dominant[i] : null,
+      rh:      d.relative_humidity_2m_mean[i] != null ? d.relative_humidity_2m_mean[i] : 80,
+      cloud:   d.cloud_cover_mean[i] != null ? d.cloud_cover_mean[i] : 50,
+      precip:  d.precipitation_probability_max[i] != null ? d.precipitation_probability_max[i] : 0
+    });
+  }
+  currentLabel = labelText;
+  fetchedAt = new Date();
+  var timeStr = fetchedAt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('loc-label').textContent = labelText + ' \u00b7 Fetched ' + timeStr;
+  renderTonightBanner();
+  renderCards();
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('output').style.display  = 'block';
+}
+
 async function checkFrost() {
   var q = document.getElementById('loc').value.trim();
   if (!q) return;
+  document.getElementById('loc').blur();
   var btn    = document.getElementById('btn');
   var errEl  = document.getElementById('error');
   var loadEl = document.getElementById('loading');
@@ -536,40 +627,17 @@ async function checkFrost() {
   outEl.style.display  = 'none';
   loadEl.style.display = 'flex';
   try {
-    var loc = await resolveLocation(q);
-    var wxRes = await fetch(
-      'https://api.open-meteo.com/v1/forecast?latitude=' + loc.lat + '&longitude=' + loc.lon +
-      '&daily=temperature_2m_min,temperature_2m_max,windspeed_10m_max,winddirection_10m_dominant,precipitation_probability_max,relative_humidity_2m_mean' +
-      '&forecast_days=7&timezone=Europe%2FLondon'
-    );
-    var wx = await wxRes.json();
-    if (!wx.daily) throw new Error('Forecast data unavailable. Please try again.');
-    var d = wx.daily;
-    forecastDays = [];
-    offset = 0;
-    for (var i = 0; i < d.time.length; i++) {
-      forecastDays.push({
-        dt:      new Date(d.time[i] + 'T00:00:00'),
-        minT:    d.temperature_2m_min[i],
-        maxT:    d.temperature_2m_max[i],
-        wind:    d.windspeed_10m_max[i],
-        windDir: d.winddirection_10m_dominant ? d.winddirection_10m_dominant[i] : null,
-        rh:      d.relative_humidity_2m_mean[i] != null ? d.relative_humidity_2m_mean[i] : 80,
-        precip:  d.precipitation_probability_max[i] != null ? d.precipitation_probability_max[i] : 0
-      });
+    if (q === 'My location' && currentLat !== null && currentLon !== null) {
+      await fetchAndShow(currentLat, currentLon, currentLabel);
+    } else {
+      var loc = await resolveLocation(q);
+      currentLat = loc.lat;
+      currentLon = loc.lon;
+      try { localStorage.setItem('frost_last_location', q); } catch(e) {}
+      var label = [loc.name, loc.area].filter(Boolean).join(', ') +
+        ' \u00b7 ' + loc.lat.toFixed(4) + '\u00b0N, ' + Math.abs(loc.lon).toFixed(4) + '\u00b0' + (loc.lon < 0 ? 'W' : 'E');
+      await fetchAndShow(loc.lat, loc.lon, label);
     }
-    currentLocName = q;
-    // Save to localStorage
-    try { localStorage.setItem('frost_last_location', q); } catch(e) {}
-
-    document.getElementById('loc-label').textContent =
-      [loc.name, loc.area].filter(Boolean).join(', ') +
-      ' \u00b7 ' + loc.lat.toFixed(4) + '\u00b0N, ' + Math.abs(loc.lon).toFixed(4) + '\u00b0' + (loc.lon < 0 ? 'W' : 'E');
-
-    renderTonightBanner();
-    renderCards();
-    loadEl.style.display = 'none';
-    outEl.style.display  = 'block';
   } catch(e) {
     loadEl.style.display = 'none';
     errEl.textContent    = e.message;
@@ -579,15 +647,48 @@ async function checkFrost() {
   }
 }
 
+function refresh() {
+  if (currentLat === null) return;
+  var btn    = document.getElementById('refresh-btn');
+  var loadEl = document.getElementById('loading');
+  var outEl  = document.getElementById('output');
+  btn.disabled = true;
+  outEl.style.display  = 'none';
+  loadEl.style.display = 'flex';
+  fetchAndShow(currentLat, currentLon, currentLabel).then(function() {
+    btn.disabled = false;
+  }, function(e) {
+    loadEl.style.display = 'none';
+    document.getElementById('error').textContent   = e.message;
+    document.getElementById('error').style.display = 'block';
+    btn.disabled = false;
+  });
+}
+
 document.getElementById('loc').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') checkFrost();
 });
 
-// On load: check URL param first, then localStorage
+// On load: check URL params first, then localStorage
 (function() {
-  var params = new URLSearchParams(window.location.search);
+  var params   = new URLSearchParams(window.location.search);
   var locParam = params.get('location');
-  if (locParam) {
+  var latParam = parseFloat(params.get('lat'));
+  var lonParam = parseFloat(params.get('lon'));
+
+  if (locParam && !isNaN(latParam) && !isNaN(lonParam)) {
+    // Shared link with coordinates — skip geocoding entirely
+    document.getElementById('loc').value = locParam;
+    currentLat = latParam;
+    currentLon = lonParam;
+    document.getElementById('loading').style.display = 'flex';
+    var label = locParam + ' \u00b7 ' + latParam.toFixed(4) + '\u00b0N, ' + Math.abs(lonParam).toFixed(4) + '\u00b0' + (lonParam < 0 ? 'W' : 'E');
+    fetchAndShow(latParam, lonParam, label).catch(function(e) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('error').textContent    = e.message;
+      document.getElementById('error').style.display  = 'block';
+    });
+  } else if (locParam) {
     document.getElementById('loc').value = locParam;
     checkFrost();
   } else {
